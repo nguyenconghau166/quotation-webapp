@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAUS SIGNS - Quotation Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">H</div>
+        <div class="logo-text">
+          <span class="logo-name">HAUS SIGNS</span>
+          <span class="logo-tagline">Quotation Generator</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="previewBtn" class="btn btn-secondary">
+          <span class="icon">👁️</span> Preview
+        </button>
+        <button id="exportBtn" class="btn btn-primary">
+          <span class="icon">📄</span> Export PDF
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Form Section -->
+      <section class="form-section">
+        <div class="card">
+          <h2 class="card-title">📋 Customer Information</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="customerName">Customer Name *</label>
+              <input type="text" id="customerName" placeholder="Enter customer name" required>
+            </div>
+            <div class="form-group">
+              <label for="quoteDate">Quote Date</label>
+              <input type="date" id="quoteDate">
+            </div>
+            <div class="form-group full-width">
+              <label for="address">Address</label>
+              <input type="text" id="address" placeholder="Enter address">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" placeholder="Enter phone number">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">🛒 Product Details</h2>
+          <div class="items-table-container">
+            <table class="items-table" id="itemsTable">
+              <thead>
+                <tr>
+                  <th class="col-desc">Description</th>
+                  <th class="col-qty">Qty</th>
+                  <th class="col-price">Price</th>
+                  <th class="col-amount">Amount</th>
+                  <th class="col-action"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody">
+                <!-- Items will be added here by JS -->
+              </tbody>
+            </table>
+            <button id="addItemBtn" class="btn btn-ghost">
+              <span class="icon">➕</span> Add Item
+            </button>
+          </div>
+          <div class="totals-section">
+            <div class="total-row">
+              <span>Down Payment (DP):</span>
+              <input type="number" id="dpAmount" value="0" min="0">
+            </div>
+            <div class="total-row subtotal">
+              <span>Subtotal:</span>
+              <span id="subtotalDisplay">0.00</span>
+            </div>
+            <div class="total-row total">
+              <span>Total:</span>
+              <span id="totalDisplay">0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">🖼️ Images</h2>
+          <p class="card-subtitle">Drag & drop or click to upload images (max 3)</p>
+          <div class="image-upload-area" id="imageUploadArea">
+            <div class="upload-placeholder" id="uploadPlaceholder">
+              <span class="upload-icon">📁</span>
+              <span class="upload-text">Drop images here or click to browse</span>
+              <span class="upload-hint">Supports: JPG, PNG, WEBP</span>
+            </div>
+            <input type="file" id="imageInput" accept="image/*" multiple hidden>
+          </div>
+          <div class="image-previews" id="imagePreviews"></div>
+        </div>
+      </section>
+
+      <!-- Preview Section -->
+      <section class="preview-section" id="previewSection">
+        <div class="preview-header">
+          <h2>📄 Quotation Preview</h2>
+          <button id="closePreview" class="btn btn-ghost">✕ Close</button>
+        </div>
+        <div class="preview-container" id="previewContainer">
+          <!-- Preview content will be generated here -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- PDF Template (hidden) - PREMIUM DESIGN -->
+  <div id="pdfTemplate" class="pdf-template">
+    <div class="pdf-content premium">
+      <!-- Page 1 -->
+      <div class="pdf-page">
+        <!-- Header with gradient bar -->
+        <div class="pdf-header-bar"></div>
+
+        <!-- Company Header -->
+        <div class="pdf-header-section">
+          <div class="pdf-logo-section">
+            <div class="pdf-logo-icon">
+              <img src="/logo.png" alt="HAUS SIGNS" class="company-logo-img">
+            </div>
+            <div class="pdf-logo-text">
+              <span class="pdf-company-name">HAUS SIGNS</span>
+              <span class="pdf-company-tagline">Premium Signage Solutions</span>
+            </div>
+          </div>
+          <div class="pdf-title-section">
+            <h1 class="pdf-main-title">QUOTATION</h1>
+            <div class="pdf-quote-number">
+              <span class="quote-label">Quote #:</span>
+              <span class="quote-value" id="pdfQuoteNumber">QT-2026-001</span>
+            </div>
+            <div class="pdf-quote-date">
+              <span class="quote-label">Date:</span>
+              <span class="quote-value" id="pdfDate"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="pdf-customer-section">
+          <div class="pdf-section-title">
+            <span class="section-icon">👤</span>
+            CUSTOMER INFORMATION
+          </div>
+          <div class="pdf-customer-grid">
+            <div class="customer-field">
+              <span class="field-label">Client Name:</span>
+              <span class="field-value" id="pdfCustomerName"></span>
+            </div>
+            <div class="customer-field">
+              <span class="field-label">Company:</span>
+              <span class="field-value" id="pdfCompany">-</span>
+            </div>
+            <div class="customer-field full">
+              <span class="field-label">Address:</span>
+              <span class="field-value" id="pdfAddress"></span>
+            </div>
+            <div class="customer-field">
+              <span class="field-label">Phone:</span>
+              <span class="field-value" id="pdfPhone"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="pdf-items-section">
+          <table class="pdf-items-table premium">
+            <thead>
+              <tr>
+                <th class="col-desc">DESCRIPTION</th>
+                <th class="col-qty">QUANTITY</th>
+                <th class="col-price">UNIT PRICE</th>
+                <th class="col-total">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody id="pdfItemsBody">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals Section -->
+        <div class="pdf-totals-section">
+          <div class="pdf-totals-box">
+            <div class="total-row">
+              <span>Subtotal:</span>
+              <span id="pdfSubtotal">0</span>
+            </div>
+            <div class="total-row">
+              <span>Down Payment:</span>
+              <span id="pdfDP">0</span>
+            </div>
+            <div class="total-row grand">
+              <span>GRAND TOTAL:</span>
+              <span id="pdfTotal">0</span>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+      <!-- Page 2 -->
+      <div class="pdf-page">
+        <!-- Layout Image -->
+        <div class="pdf-image-section">
+          <div class="pdf-section-title small">
+            <span class="section-icon">🖼️</span>
+            LAYOUT PREVIEW
+          </div>
+          <div class="pdf-image-container large" id="pdfLayoutImage"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="pdf-summary-row">
+          <div class="summary-box">
+            <span class="summary-label">SUBTOTAL:</span>
+            <span class="summary-value" id="pdfSubtotal2"></span>
+          </div>
+          <div class="summary-box grand">
+            <span class="summary-label">TOTAL:</span>
+            <span class="summary-value" id="pdfTotal2"></span>
+          </div>
+        </div>
+
+        <!-- Payment & Bank Info -->
+        <div class="pdf-footer-grid">
+          <div class="pdf-payment-terms">
+            <div class="terms-title">
+              <span class="icon">💳</span> Payment Terms
+            </div>
+            <ul class="terms-list">
+              <li><strong>30% deposit</strong> required to proceed with the order</li>
+              <li><strong>70% balance</strong> upon completion, prior to delivery/installation</li>
+            </ul>
+            <div class="terms-note">
+              <strong>Note:</strong> Price includes accompanying accessories. Installation fees and shipping are not
+              included. This is a NON-VAT receipt.
+            </div>
+          </div>
+
+          <div class="pdf-bank-info">
+            <div class="bank-title">Bank Transfer Details</div>
+            <div class="bank-logo">BDO</div>
+            <div class="bank-details">
+              <p><strong>Account Name:</strong> HausSigns</p>
+              <p><strong>Account No:</strong> 003890144424</p>
+            </div>
+            <div class="qr-code">
+              <img src="/qr-code.png" alt="BDO QR Code" class="qr-code-img">
+              <span>Scan to pay</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="pdf-trust-section">
+          <div class="trust-badge">
+            <div class="badge-icon">🏆</div>
+            <span>12 Months Warranty</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-icon">✅</div>
+            <span>Quality Guaranteed</span>
+          </div>
+          <div class="trust-badge">
+            <div class="badge-icon">🛡️</div>
+            <span>Licensed & Insured</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pdf-footer-bar">
+          <div class="footer-content">
+            <span>📍 Street, Manotok Subdivision, 15 F. Lazaro, Valenzuela, 1440 Metro Manila, Philippines</span>
+            <span>📞 09105 838383</span>
+            <span>🌐 www.haussigns.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>
