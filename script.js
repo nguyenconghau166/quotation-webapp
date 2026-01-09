@@ -315,17 +315,23 @@ function updatePDFTemplate() {
   document.getElementById('pdfSubtotal').textContent = formatNumber(subtotal);
   document.getElementById('pdfTotal').textContent = formatNumber(total);
 
-  // Images - only Layout section
+  // Images - each in its own row
   const layoutContainer = document.getElementById('pdfLayoutImage');
+  const imagesSection = document.getElementById('pdfImagesSection');
 
   if (layoutContainer) {
     if (state.images.length > 0) {
-      // Show all images in layout container
+      // Show each image in its own row with label
       layoutContainer.innerHTML = state.images.map((img, i) =>
-        `<img src="${img.data}" alt="Layout ${i + 1}" style="max-width:100%; margin-bottom:10px;">`
+        `<div class="pdf-image-row">
+          <img src="${img.data}" alt="Layout ${i + 1}">
+          <div class="pdf-image-label">Layout ${i + 1} of ${state.images.length}</div>
+        </div>`
       ).join('');
+      imagesSection.style.display = 'block';
     } else {
-      layoutContainer.innerHTML = '<span style="color:#999;">No image</span>';
+      layoutContainer.innerHTML = '';
+      imagesSection.style.display = 'none';
     }
   }
 }
@@ -350,7 +356,7 @@ function exportPDF() {
   elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
   const opt = {
-    margin: 0,
+    margin: [10, 0, 15, 0], // top, right, bottom, left - leave space for page numbers
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
@@ -370,7 +376,24 @@ function exportPDF() {
   template.style.position = 'static';
   template.style.left = '0';
 
-  html2pdf().set(opt).from(template.querySelector('.pdf-content')).save().then(() => {
+  html2pdf().set(opt).from(template.querySelector('.pdf-content')).toPdf().get('pdf').then(function (pdf) {
+    const totalPages = pdf.internal.getNumberOfPages();
+
+    // Add page numbers to each page
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageText = `${i}/${totalPages}`;
+
+      // Center the page number at the bottom
+      const textWidth = pdf.getTextWidth(pageText);
+      pdf.text(pageText, (pageWidth - textWidth) / 2, pageHeight - 5);
+    }
+  }).save().then(() => {
     // Hide template again
     template.style.position = 'absolute';
     template.style.left = '-9999px';
