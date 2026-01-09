@@ -55,10 +55,7 @@ function init() {
   elements.imageUploadArea.addEventListener('dragleave', handleDragLeave);
   elements.imageUploadArea.addEventListener('drop', handleDrop);
 
-  // Paste from clipboard (Ctrl+V)
-  elements.imageUploadArea.setAttribute('tabindex', '0'); // Make it focusable
-  elements.imageUploadArea.addEventListener('paste', handlePaste);
-  // Also listen on document for convenience when upload area is visible
+  // Paste from clipboard (Ctrl+V) - works anywhere on page
   document.addEventListener('paste', handleGlobalPaste);
 
   // Preview and export
@@ -179,24 +176,6 @@ function handleDrop(e) {
   addImages(files);
 }
 
-function handlePaste(e) {
-  e.preventDefault();
-  const items = e.clipboardData?.items;
-  if (!items) return;
-
-  const imageFiles = [];
-  for (const item of items) {
-    if (item.type.startsWith('image/')) {
-      const file = item.getAsFile();
-      if (file) imageFiles.push(file);
-    }
-  }
-
-  if (imageFiles.length > 0) {
-    addImages(imageFiles);
-  }
-}
-
 function handleGlobalPaste(e) {
   // Only handle if upload area is visible (not at max images)
   if (state.images.length >= 3) return;
@@ -220,6 +199,11 @@ function handleGlobalPaste(e) {
 
   if (imageFiles.length > 0) {
     e.preventDefault();
+    // Visual feedback - briefly highlight the upload area
+    elements.imageUploadArea.classList.add('dragover');
+    setTimeout(() => {
+      elements.imageUploadArea.classList.remove('dragover');
+    }, 300);
     addImages(imageFiles);
   }
 }
