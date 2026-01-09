@@ -315,12 +315,6 @@ function updatePDFTemplate() {
   document.getElementById('pdfSubtotal').textContent = formatNumber(subtotal);
   document.getElementById('pdfTotal').textContent = formatNumber(total);
 
-  // Page 2 totals
-  const pdfSubtotal2 = document.getElementById('pdfSubtotal2');
-  const pdfTotal2 = document.getElementById('pdfTotal2');
-  if (pdfSubtotal2) pdfSubtotal2.textContent = formatNumber(subtotal);
-  if (pdfTotal2) pdfTotal2.textContent = formatNumber(total);
-
   // Images - only Layout section
   const layoutContainer = document.getElementById('pdfLayoutImage');
 
