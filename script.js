@@ -356,45 +356,32 @@ function exportPDF() {
   elements.exportBtn.disabled = true;
   elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
-  const opt = {
-    margin: 0, // No margin to ensure content starts from top
-    filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: {
-      scale: 2,
-      useCORS: true,
-      logging: false
-    },
-    jsPDF: {
-      unit: 'mm',
-      format: 'a4',
-      orientation: 'portrait'
-    },
-    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-  };
-
   // Make template visible in normal document flow
   template.style.position = 'static';
   template.style.left = 'auto';
 
-  html2pdf().set(opt).from(pdfContent).toPdf().get('pdf').then(function (pdf) {
-    const totalPages = pdf.internal.getNumberOfPages();
+  // Use html2canvas to capture the content, then create single-page PDF
+  html2canvas(pdfContent, {
+    scale: 2,
+    useCORS: true,
+    logging: false
+  }).then(canvas => {
+    const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-    // Add page numbers to each page
-    for (let i = 1; i <= totalPages; i++) {
-      pdf.setPage(i);
-      pdf.setFontSize(10);
-      pdf.setTextColor(100, 100, 100);
+    // Calculate dimensions
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = (canvas.height * imgWidth) / canvas.width;
 
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const pageText = `${i}/${totalPages}`;
+    // Create PDF with custom height to fit all content in one page
+    const pdf = new jspdf.jsPDF({
+      unit: 'mm',
+      format: [imgWidth, pageHeight],
+      orientation: 'portrait'
+    });
 
-      // Center the page number at the bottom
-      const textWidth = pdf.getTextWidth(pageText);
-      pdf.text(pageText, (pageWidth - textWidth) / 2, pageHeight - 5);
-    }
-  }).save().then(() => {
+    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, pageHeight);
+    pdf.save(filename);
+
     // Hide template again
     template.style.position = 'absolute';
     template.style.left = '-9999px';
@@ -402,6 +389,18 @@ function exportPDF() {
     // Restore button
     elements.exportBtn.disabled = false;
     elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
+  }).catch(error => {
+    console.error('Error generating PDF:', error);
+
+    // Hide template again
+    template.style.position = 'absolute';
+    template.style.left = '-9999px';
+
+    // Restore button
+    elements.exportBtn.disabled = false;
+    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
+
+    alert('Error generating PDF. Please try again.');
   });
 }
 
