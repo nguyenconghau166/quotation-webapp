@@ -757,6 +757,8 @@ body {
 
 .pdf-content.premium .pdf-image-row img {
   width: 100%;
+  max-height: 800px;
+  /* Limit height to fit within A4 page */
   height: auto;
   display: block;
   object-fit: contain;
@@ -768,6 +770,13 @@ body {
   color: #64748b;
   margin-top: 8px;
   font-weight: 500;
+}
+
+.pdf-content.premium .on-next-page {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 400;
+  font-style: italic;
 }
 
 /* Legacy image container (for backward compatibility) */

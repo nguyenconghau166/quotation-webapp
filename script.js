@@ -356,7 +356,7 @@ function exportPDF() {
   elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
   const opt = {
-    margin: [10, 0, 15, 0], // top, right, bottom, left - leave space for page numbers
+    margin: [0, 0, 10, 0], // top, right, bottom, left - minimal top margin, bottom for page numbers
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
