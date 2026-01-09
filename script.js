@@ -357,16 +357,13 @@ function exportPDF() {
   elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
   const opt = {
-    margin: [0, 0, 10, 0], // top, right, bottom, left - minimal top margin, bottom for page numbers
+    margin: [0, 0, 10, 0], // top, right, bottom, left
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
       scale: 2,
       useCORS: true,
-      logging: false,
-      windowWidth: 794, // A4 width
-      scrollX: 0,
-      scrollY: 0
+      logging: false
     },
     jsPDF: {
       unit: 'mm',
@@ -376,45 +373,36 @@ function exportPDF() {
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
-  // Make template visible temporarily for proper rendering
-  template.style.position = 'fixed';
-  template.style.left = '0';
-  template.style.top = '0';
-  template.style.zIndex = '-1';
-  template.style.opacity = '1';
+  // Make template visible in normal document flow
+  template.style.position = 'static';
+  template.style.left = 'auto';
 
-  // Small delay to ensure DOM is rendered properly
-  setTimeout(() => {
-    html2pdf().set(opt).from(pdfContent).toPdf().get('pdf').then(function (pdf) {
-      const totalPages = pdf.internal.getNumberOfPages();
+  html2pdf().set(opt).from(pdfContent).toPdf().get('pdf').then(function (pdf) {
+    const totalPages = pdf.internal.getNumberOfPages();
 
-      // Add page numbers to each page
-      for (let i = 1; i <= totalPages; i++) {
-        pdf.setPage(i);
-        pdf.setFontSize(10);
-        pdf.setTextColor(100, 100, 100);
+    // Add page numbers to each page
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(10);
+      pdf.setTextColor(100, 100, 100);
 
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const pageText = `${i}/${totalPages}`;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pageText = `${i}/${totalPages}`;
 
-        // Center the page number at the bottom
-        const textWidth = pdf.getTextWidth(pageText);
-        pdf.text(pageText, (pageWidth - textWidth) / 2, pageHeight - 5);
-      }
-    }).save().then(() => {
-      // Hide template again
-      template.style.position = 'absolute';
-      template.style.left = '-9999px';
-      template.style.top = '0';
-      template.style.zIndex = '';
-      template.style.opacity = '';
+      // Center the page number at the bottom
+      const textWidth = pdf.getTextWidth(pageText);
+      pdf.text(pageText, (pageWidth - textWidth) / 2, pageHeight - 5);
+    }
+  }).save().then(() => {
+    // Hide template again
+    template.style.position = 'absolute';
+    template.style.left = '-9999px';
 
-      // Restore button
-      elements.exportBtn.disabled = false;
-      elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
-    });
-  }, 100);
+    // Restore button
+    elements.exportBtn.disabled = false;
+    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
+  });
 }
 
 // ==================== Utilities ====================
