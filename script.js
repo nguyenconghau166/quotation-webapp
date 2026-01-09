@@ -55,6 +55,12 @@ function init() {
   elements.imageUploadArea.addEventListener('dragleave', handleDragLeave);
   elements.imageUploadArea.addEventListener('drop', handleDrop);
 
+  // Paste from clipboard (Ctrl+V)
+  elements.imageUploadArea.setAttribute('tabindex', '0'); // Make it focusable
+  elements.imageUploadArea.addEventListener('paste', handlePaste);
+  // Also listen on document for convenience when upload area is visible
+  document.addEventListener('paste', handleGlobalPaste);
+
   // Preview and export
   elements.previewBtn.addEventListener('click', showPreview);
   elements.closePreview.addEventListener('click', hidePreview);
@@ -171,6 +177,51 @@ function handleDrop(e) {
 
   const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
   addImages(files);
+}
+
+function handlePaste(e) {
+  e.preventDefault();
+  const items = e.clipboardData?.items;
+  if (!items) return;
+
+  const imageFiles = [];
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) imageFiles.push(file);
+    }
+  }
+
+  if (imageFiles.length > 0) {
+    addImages(imageFiles);
+  }
+}
+
+function handleGlobalPaste(e) {
+  // Only handle if upload area is visible (not at max images)
+  if (state.images.length >= 3) return;
+
+  // Don't handle if user is typing in an input/textarea
+  const activeElement = document.activeElement;
+  if (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA') {
+    return;
+  }
+
+  const items = e.clipboardData?.items;
+  if (!items) return;
+
+  const imageFiles = [];
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) imageFiles.push(file);
+    }
+  }
+
+  if (imageFiles.length > 0) {
+    e.preventDefault();
+    addImages(imageFiles);
+  }
 }
 
 function addImages(files) {
