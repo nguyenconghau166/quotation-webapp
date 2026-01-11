@@ -27,8 +27,8 @@ const elements = {
   imageInput: document.getElementById('imageInput'),
   imagePreviews: document.getElementById('imagePreviews'),
   previewBtn: document.getElementById('previewBtn'),
-  exportBtn: document.getElementById('exportBtn'),
-  exportMenu: document.getElementById('exportMenu'),
+  exportPdfBtn: document.getElementById('exportPdfBtn'),
+  exportImageBtn: document.getElementById('exportImageBtn'),
   previewSection: document.getElementById('previewSection'),
   closePreview: document.getElementById('closePreview'),
   previewContainer: document.getElementById('previewContainer')
@@ -63,17 +63,9 @@ function init() {
   elements.previewBtn.addEventListener('click', showPreview);
   elements.closePreview.addEventListener('click', hidePreview);
 
-  // Export dropdown options
-  elements.exportMenu.querySelectorAll('.export-option').forEach(option => {
-    option.addEventListener('click', (e) => {
-      const format = e.currentTarget.dataset.format;
-      if (format === 'pdf') {
-        exportPDF();
-      } else if (format === 'image') {
-        exportImage();
-      }
-    });
-  });
+  // Export buttons
+  elements.exportPdfBtn.addEventListener('click', exportPDF);
+  elements.exportImageBtn.addEventListener('click', exportImage);
 }
 
 // ==================== Items Management ====================
@@ -361,8 +353,8 @@ function exportPDF() {
   const filename = `Quotation_${customerName}_${date}.pdf`;
 
   // Show loading
-  elements.exportBtn.disabled = true;
-  elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
+  elements.exportPdfBtn.disabled = true;
+  elements.exportPdfBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
   // Make template visible in normal document flow
   template.style.position = 'static';
@@ -395,8 +387,8 @@ function exportPDF() {
     template.style.left = '-9999px';
 
     // Restore button
-    elements.exportBtn.disabled = false;
-    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+    elements.exportPdfBtn.disabled = false;
+    elements.exportPdfBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
   }).catch(error => {
     console.error('Error generating PDF:', error);
 
@@ -405,8 +397,8 @@ function exportPDF() {
     template.style.left = '-9999px';
 
     // Restore button
-    elements.exportBtn.disabled = false;
-    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+    elements.exportPdfBtn.disabled = false;
+    elements.exportPdfBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
 
     alert('Error generating PDF. Please try again.');
   });
@@ -429,8 +421,8 @@ function exportImage() {
   const filename = `Quotation_${customerName}_${date}.png`;
 
   // Show loading
-  elements.exportBtn.disabled = true;
-  elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
+  elements.exportImageBtn.disabled = true;
+  elements.exportImageBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
 
   // Make template visible in normal document flow
   template.style.position = 'static';
@@ -458,8 +450,8 @@ function exportImage() {
       template.style.left = '-9999px';
 
       // Restore button
-      elements.exportBtn.disabled = false;
-      elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+      elements.exportImageBtn.disabled = false;
+      elements.exportImageBtn.innerHTML = '<span class="icon">🖼️</span> Export Image';
     }, 'image/png');
   }).catch(error => {
     console.error('Error generating image:', error);
@@ -469,8 +461,8 @@ function exportImage() {
     template.style.left = '-9999px';
 
     // Restore button
-    elements.exportBtn.disabled = false;
-    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+    elements.exportImageBtn.disabled = false;
+    elements.exportImageBtn.innerHTML = '<span class="icon">🖼️</span> Export Image';
 
     alert('Error generating image. Please try again.');
   });
