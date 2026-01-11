@@ -177,8 +177,7 @@ function handleDrop(e) {
 }
 
 function handleGlobalPaste(e) {
-  // Only handle if upload area is visible (not at max images)
-  if (state.images.length >= 3) return;
+  // Handle paste from clipboard
 
   // Don't handle if user is typing in an input/textarea
   const activeElement = document.activeElement;
@@ -209,8 +208,8 @@ function handleGlobalPaste(e) {
 }
 
 function addImages(files) {
-  const remaining = 3 - state.images.length;
-  const toAdd = files.slice(0, remaining);
+  // Add all selected files (no limit)
+  const toAdd = files;
 
   toAdd.forEach(file => {
     const reader = new FileReader();
@@ -226,13 +225,14 @@ function addImages(files) {
 }
 
 function renderImagePreviews() {
-  const labels = ['Layout', 'Additional 1', 'Additional 2'];
+  // Dynamic labels for unlimited images
+  const getLabel = (index) => index === 0 ? 'Layout' : `Additional ${index}`;
 
   elements.imagePreviews.innerHTML = state.images.map((img, index) => `
     <div class="image-preview-item">
       <img src="${img.data}" alt="${img.name}">
       <button class="remove-btn" data-index="${index}">✕</button>
-      <div class="image-label">${labels[index] || 'Image ' + (index + 1)}</div>
+      <div class="image-label">${getLabel(index)}</div>
     </div>
   `).join('');
 
@@ -245,12 +245,8 @@ function renderImagePreviews() {
     });
   });
 
-  // Update upload area visibility
-  if (state.images.length >= 3) {
-    elements.imageUploadArea.style.display = 'none';
-  } else {
-    elements.imageUploadArea.style.display = 'block';
-  }
+  // Upload area always visible (no limit)
+  elements.imageUploadArea.style.display = 'block';
 }
 
 // ==================== Preview ====================
