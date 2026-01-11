@@ -28,6 +28,7 @@ const elements = {
   imagePreviews: document.getElementById('imagePreviews'),
   previewBtn: document.getElementById('previewBtn'),
   exportBtn: document.getElementById('exportBtn'),
+  exportMenu: document.getElementById('exportMenu'),
   previewSection: document.getElementById('previewSection'),
   closePreview: document.getElementById('closePreview'),
   previewContainer: document.getElementById('previewContainer')
@@ -61,7 +62,18 @@ function init() {
   // Preview and export
   elements.previewBtn.addEventListener('click', showPreview);
   elements.closePreview.addEventListener('click', hidePreview);
-  elements.exportBtn.addEventListener('click', exportPDF);
+
+  // Export dropdown options
+  elements.exportMenu.querySelectorAll('.export-option').forEach(option => {
+    option.addEventListener('click', (e) => {
+      const format = e.currentTarget.dataset.format;
+      if (format === 'pdf') {
+        exportPDF();
+      } else if (format === 'image') {
+        exportImage();
+      }
+    });
+  });
 }
 
 // ==================== Items Management ====================
@@ -384,7 +396,7 @@ function exportPDF() {
 
     // Restore button
     elements.exportBtn.disabled = false;
-    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
+    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
   }).catch(error => {
     console.error('Error generating PDF:', error);
 
@@ -394,9 +406,73 @@ function exportPDF() {
 
     // Restore button
     elements.exportBtn.disabled = false;
-    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export PDF';
+    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
 
     alert('Error generating PDF. Please try again.');
+  });
+}
+
+function exportImage() {
+  // Validate
+  if (!elements.customerName.value.trim()) {
+    alert('Please enter customer name');
+    elements.customerName.focus();
+    return;
+  }
+
+  updatePDFTemplate();
+
+  const template = document.getElementById('pdfTemplate');
+  const pdfContent = template.querySelector('.pdf-content');
+  const customerName = elements.customerName.value.replace(/[^a-zA-Z0-9]/g, '_');
+  const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  const filename = `Quotation_${customerName}_${date}.png`;
+
+  // Show loading
+  elements.exportBtn.disabled = true;
+  elements.exportBtn.innerHTML = '<span class="icon">⏳</span> Generating...';
+
+  // Make template visible in normal document flow
+  template.style.position = 'static';
+  template.style.left = 'auto';
+
+  // Use html2canvas to capture the content as image
+  html2canvas(pdfContent, {
+    scale: 2,
+    useCORS: true,
+    logging: false
+  }).then(canvas => {
+    // Convert canvas to blob and download
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      // Hide template again
+      template.style.position = 'absolute';
+      template.style.left = '-9999px';
+
+      // Restore button
+      elements.exportBtn.disabled = false;
+      elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+    }, 'image/png');
+  }).catch(error => {
+    console.error('Error generating image:', error);
+
+    // Hide template again
+    template.style.position = 'absolute';
+    template.style.left = '-9999px';
+
+    // Restore button
+    elements.exportBtn.disabled = false;
+    elements.exportBtn.innerHTML = '<span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>';
+
+    alert('Error generating image. Please try again.');
   });
 }
 

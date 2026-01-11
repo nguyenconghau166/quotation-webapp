@@ -26,9 +26,19 @@
         <button id="previewBtn" class="btn btn-secondary">
           <span class="icon">👁️</span> Preview
         </button>
-        <button id="exportBtn" class="btn btn-primary">
-          <span class="icon">📄</span> Export PDF
-        </button>
+        <div class="export-dropdown">
+          <button id="exportBtn" class="btn btn-primary">
+            <span class="icon">📄</span> Export <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="export-menu" id="exportMenu">
+            <button class="export-option" data-format="pdf">
+              <span class="icon">📄</span> Export as PDF
+            </button>
+            <button class="export-option" data-format="image">
+              <span class="icon">🖼️</span> Export as Image
+            </button>
+          </div>
+        </div>
       </div>
     </header>
 

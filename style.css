@@ -161,6 +161,70 @@ body {
   font-size: 1rem;
 }
 
+/* ==================== Export Dropdown ==================== */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-dropdown .dropdown-arrow {
+  font-size: 0.625rem;
+  margin-left: 0.25rem;
+  transition: transform 0.2s ease;
+}
+
+.export-dropdown:hover .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.export-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 200;
+  min-width: 180px;
+  overflow: hidden;
+}
+
+.export-dropdown:hover .export-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.export-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.export-option:hover {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.export-option .icon {
+  font-size: 1rem;
+}
+
 /* ==================== Main Content ==================== */
 .main {
   flex: 1;
