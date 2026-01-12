@@ -428,11 +428,12 @@ function exportImage() {
   template.style.position = 'static';
   template.style.left = 'auto';
 
-  // Use html2canvas to capture the content as image
+  // Use html2canvas to capture the content as image (high quality)
   html2canvas(pdfContent, {
-    scale: 2,
+    scale: 4,  // Higher scale for sharper image quality
     useCORS: true,
-    logging: false
+    logging: false,
+    backgroundColor: '#ffffff'
   }).then(canvas => {
     // Convert canvas to blob and download
     canvas.toBlob(blob => {
