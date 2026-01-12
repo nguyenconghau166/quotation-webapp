@@ -321,13 +321,10 @@ function updatePDFTemplate() {
 
   if (layoutContainer) {
     if (state.images.length > 0) {
-      // Show each image in its own row with label and watermark overlay
+      // Show each image in its own row with label
       layoutContainer.innerHTML = state.images.map((img, i) =>
         `<div class="pdf-image-row">
-          <div class="pdf-image-wrapper">
-            <img src="${img.data}" alt="Layout ${i + 1}">
-            <div class="watermark-overlay"></div>
-          </div>
+          <img src="${img.data}" alt="Layout ${i + 1}">
           <div class="pdf-image-label">Layout ${i + 1} of ${state.images.length}</div>
         </div>`
       ).join('');

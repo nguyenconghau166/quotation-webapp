@@ -828,33 +828,6 @@ body {
   object-fit: contain;
 }
 
-/* Image wrapper for watermark overlay */
-.pdf-content.premium .pdf-image-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.pdf-content.premium .pdf-image-wrapper img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.pdf-content.premium .watermark-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('/watermark.png');
-  background-repeat: repeat;
-  background-size: 200px auto;
-  background-position: center;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
 .pdf-content.premium .pdf-image-label {
   text-align: center;
   font-size: 10px;
